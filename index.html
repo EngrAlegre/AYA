@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1" />
+	<title>For Aya — Happy Monthsary</title>
+	<link rel="stylesheet" href="style.css" />
+	<meta name="theme-color" content="#ff6aa2" />
+</head>
+<body>
+	<canvas id="confetti" aria-hidden="true"></canvas>
+	<div id="hearts" aria-hidden="true"></div>
+
+	<main class="container">
+		<h1 class="headline">Happy Monthsary, Aya! <span aria-hidden="true">❤️</span></h1>
+
+		<section id="envelopeSection" class="envelope-section">
+			<button id="openEnvelope" class="envelope" type="button" aria-label="Open the envelope">
+				<div class="envelope-top"></div>
+				<div class="envelope-bottom"></div>
+				<div class="envelope-letter"><span>Tap to open</span></div>
+			</button>
+		</section>
+
+		<section id="message" class="message hidden" aria-live="polite">
+			<p class="dear">To my dearest Aya,</p>
+			<p>
+				Every day with you turns ordinary moments into little miracles. Thank you for your
+				laughter, your warmth, and the way you make the world softer just by being in it.
+			</p>
+			<p>
+				On our monthsary, I just want to remind you how loved you are — by me, always.
+				You are my favorite hello, my sweetest memory, and my forever choice.
+			</p>
+			<p class="closing">
+				With all my love,<br />
+				<span class="signature">Isaac</span>
+			</p>
+		</section>
+	</main>
+
+	<footer class="footnote">
+		<small>Tip: click the envelope to open the surprise.</small>
+	</footer>
+
+	<audio id="bgm" preload="auto" src="Ikaw Lamang.mp3"></audio>
+	<script src="script.js" defer></script>
+</body>
+</html>
+
+
