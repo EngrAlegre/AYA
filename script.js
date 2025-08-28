@@ -9,6 +9,25 @@
 
 	let confettiAnimationId = null;
 	let heartSpawnerId = null;
+	let audioContext = null;
+	let audioSource = null;
+	let audioGain = null;
+
+	function ensureAudioGraph() {
+		if (!bgm) return;
+		const Ctx = window.AudioContext || window.webkitAudioContext;
+		if (!Ctx) return; // Fallback silently if WebAudio not supported
+		if (!audioContext) audioContext = new Ctx();
+		if (audioContext.state === 'suspended') {
+			audioContext.resume().catch(() => {});
+		}
+		if (!audioSource) {
+			audioSource = audioContext.createMediaElementSource(bgm);
+			audioGain = audioContext.createGain();
+			audioGain.gain.value = 1.15; // gentle boost
+			audioSource.connect(audioGain).connect(audioContext.destination);
+		}
+	}
 
 	function reveal() {
 		// Show message with effects and play music
@@ -16,12 +35,32 @@
 		messageEl.classList.remove('hidden');
 		startConfetti(14000);
 		startHearts(14000);
+		// Hide envelope after opening to avoid overlapping the headline
+		envelopeBtn.classList.add('envelope-gone');
 		if (bgm) {
+			bgm.muted = false;
+			bgm.loop = true;
+			bgm.playbackRate = 1.0;
 			bgm.currentTime = 0;
-			bgm.volume = 0.85;
+			bgm.volume = 1.0;
+			ensureAudioGraph();
+			const tryPlayNow = () => bgm.play().catch(() => {});
+			if (bgm.readyState < 3) {
+				bgm.addEventListener('canplaythrough', tryPlayNow, { once: true });
+			} else {
+				tryPlayNow();
+			}
+			// Retry shortly in case the first attempt races with decoding
+			setTimeout(() => {
+				if (bgm.paused || bgm.currentTime === 0) {
+					ensureAudioGraph();
+					bgm.play().catch(() => {});
+				}
+			}, 400);
 			bgm.play().catch(() => {
 				// If autoplay is blocked, attach a one-time fallback to next user interaction
 				const tryPlay = () => {
+					ensureAudioGraph();
 					bgm.play().catch(() => {}).finally(() => {
 						document.removeEventListener('click', tryPlay, true);
 						document.removeEventListener('keydown', tryPlay, true);

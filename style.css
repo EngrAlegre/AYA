@@ -210,7 +210,7 @@ html, body {
 }
 
 /* Envelope */
-.envelope-section { margin-top: 16px; }
+.envelope-section { margin-top: clamp(32px, 7vw, 96px); }
 .envelope {
 	position: relative;
 	display: inline-block;
@@ -269,6 +269,14 @@ html, body {
 
 body.revealed .envelope-top {
 	transform: perspective(600px) rotateX(-160deg);
+}
+
+/* Hide the envelope gracefully after opening to avoid overlapping headline */
+.envelope-gone {
+	opacity: 0;
+	transform: translateY(-16px) scale(0.96);
+	pointer-events: none;
+	transition: opacity 0.45s ease, transform 0.45s ease;
 }
 
 
