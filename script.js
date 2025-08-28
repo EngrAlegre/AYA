@@ -12,6 +12,7 @@
 	let audioContext = null;
 	let audioSource = null;
 	let audioGain = null;
+	let fallbackAudio = null;
 
 	function ensureAudioGraph() {
 		if (!bgm) return;
@@ -37,6 +38,7 @@
 		startHearts(14000);
 		// Hide envelope after opening to avoid overlapping the headline
 		envelopeBtn.classList.add('envelope-gone');
+		setTimeout(() => { try { envelopeBtn.remove(); } catch (_) {} }, 700);
 		if (bgm) {
 			bgm.muted = false;
 			bgm.loop = true;
@@ -57,6 +59,18 @@
 					bgm.play().catch(() => {});
 				}
 			}, 400);
+			// Final fallback: if still silent after 1s, spawn a fresh Audio()
+			setTimeout(() => {
+				if (bgm.paused || bgm.currentTime < 0.1) {
+					try {
+						if (fallbackAudio) { try { fallbackAudio.pause(); } catch (_) {} }
+						fallbackAudio = new Audio('IkawLamang.mp3');
+						fallbackAudio.loop = true;
+						fallbackAudio.volume = 1.0;
+						fallbackAudio.play().catch(() => {});
+					} catch (_) {}
+				}
+			}, 1000);
 			bgm.play().catch(() => {
 				// If autoplay is blocked, attach a one-time fallback to next user interaction
 				const tryPlay = () => {
