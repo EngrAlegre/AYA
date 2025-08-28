@@ -19,7 +19,19 @@
 		if (bgm) {
 			bgm.currentTime = 0;
 			bgm.volume = 0.85;
-			bgm.play().catch(() => {/* ignored */});
+			bgm.play().catch(() => {
+				// If autoplay is blocked, attach a one-time fallback to next user interaction
+				const tryPlay = () => {
+					bgm.play().catch(() => {}).finally(() => {
+						document.removeEventListener('click', tryPlay, true);
+						document.removeEventListener('keydown', tryPlay, true);
+						document.removeEventListener('touchstart', tryPlay, true);
+					});
+				};
+				document.addEventListener('click', tryPlay, true);
+				document.addEventListener('keydown', tryPlay, true);
+				document.addEventListener('touchstart', tryPlay, true);
+			});
 		}
 	}
 
